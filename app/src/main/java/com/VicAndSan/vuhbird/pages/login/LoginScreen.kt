@@ -1,7 +1,9 @@
 package com.VicAndSan.vuhbird.pages.login
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -12,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.TextField
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextDecoration
@@ -19,8 +22,8 @@ import com.VicAndSan.vuhbird.R
 
 @Composable
 fun loginScreen() {
-    var email = remember { mutableStateOf("") }
-    var password = remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("Hello") }
+    var password by remember { mutableStateOf("Hello") }
 
     Column(
         modifier = Modifier
@@ -48,7 +51,20 @@ fun loginScreen() {
         Spacer(modifier = Modifier.height(32.dp))
 
         // Email input
-
+        TextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Label") },
+            placeholder = { Text("Email") }
+        )
+        Spacer(modifier = Modifier.height(5.dp))
+        // Password input
+        TextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Label") },
+            placeholder = { Text("Contraseña") }
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
