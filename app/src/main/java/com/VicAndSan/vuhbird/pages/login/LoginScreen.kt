@@ -1,6 +1,7 @@
 package com.VicAndSan.vuhbird.pages.login
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,8 +19,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import com.VicAndSan.vuhbird.R
 
+@Preview
 @Composable
 fun loginScreen() {
     var email by remember { mutableStateOf("Hello") }
@@ -28,7 +31,8 @@ fun loginScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .background(Color.White),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -37,24 +41,16 @@ fun loginScreen() {
             painter = painterResource(id = R.drawable.vuhbird_icon), // Reemplaza con el recurso de tu logo
             contentDescription = "Logo",
             modifier = Modifier
-                .size(100.dp)
+                .size(150.dp)
                 .padding(bottom = 16.dp),
             contentScale = ContentScale.Fit
         )
-
-        // Nombre
-        Text(
-            text = "VUH BIRD",
-            style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        )
-
         Spacer(modifier = Modifier.height(32.dp))
 
         // Email input
         TextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Label") },
             placeholder = { Text("Email") }
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -62,7 +58,6 @@ fun loginScreen() {
         TextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Label") },
             placeholder = { Text("Contraseña") }
         )
 
@@ -70,7 +65,7 @@ fun loginScreen() {
 
         // Login button
         Button(
-            onClick = { /* Acción de inicio de sesión */ },
+            onClick = { /*signInWithEmailAndPassword*/ },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
