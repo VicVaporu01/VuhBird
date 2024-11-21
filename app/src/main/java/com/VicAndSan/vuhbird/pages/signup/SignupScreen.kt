@@ -3,10 +3,7 @@ package com.VicAndSan.vuhbird.pages.signup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.R
 import androidx.compose.ui.Alignment
@@ -21,9 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-@Preview
 @Composable
-fun signup (){
+fun SignUpScreen (navigateToLogin: () -> Unit){
     var nombre by remember { mutableStateOf(" ") }
     var celular by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -54,8 +50,8 @@ fun signup (){
         Spacer(modifier = Modifier.height(32.dp))
         //Nombre
         TextField(
-            value = nombre,
-            onValueChange = { nombre = it },
+            value = celular,
+            onValueChange = { celular = it },
             placeholder = { Text("Nombre Completo") }
         )
         Spacer(modifier = Modifier.height(5.dp))
@@ -98,11 +94,12 @@ fun signup (){
         Row {
             Text("¿Ya tienes cuenta?")
             Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "Login",
-                style = TextStyle(color = Color(0xFF2D3D1F), textDecoration = TextDecoration.Underline),
-                modifier = Modifier.padding(start = 4.dp)
-            )
+            TextButton(onClick = { navigateToLogin() }) {
+                Text(
+                    text = "Login",
+                    style = TextStyle(color = Color(0xFF2D3D1F), textDecoration = TextDecoration.Underline)
+                )
+            }
         }
     }
 
