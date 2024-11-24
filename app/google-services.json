@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "917126786784",
+    "project_id": "vuhbird",
+    "storage_bucket": "vuhbird.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917126786784:android:8c0bab4f08b9f8ad286a85",
+        "android_client_info": {
+          "package_name": "com.VicAndSan.vuhbird"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6EvSQXYiRHOnoU5gPwXqVsE6j0AAkjgs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
