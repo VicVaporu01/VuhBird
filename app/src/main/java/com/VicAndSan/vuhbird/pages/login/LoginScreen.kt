@@ -1,7 +1,10 @@
 package com.VicAndSan.vuhbird.pages.login
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,19 +17,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.TextField
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import com.VicAndSan.vuhbird.R
 
-@Preview
 @Composable
-fun loginScreen() {
-    var email by remember { mutableStateOf("Hello") }
-    var password by remember { mutableStateOf("Hello") }
+fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -65,7 +65,7 @@ fun loginScreen() {
 
         // Login button
         Button(
-            onClick = { /*signInWithEmailAndPassword*/ },
+            onClick = { navigateToMain() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -80,11 +80,12 @@ fun loginScreen() {
         Row {
             Text("¿No tienes cuenta?")
             Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "Registrate",
-                style = TextStyle(color = Color(0xFF2D3D1F), textDecoration = TextDecoration.Underline),
-                modifier = Modifier.padding(start = 4.dp)
-            )
+            TextButton(onClick = { navigateToSignUp() }) {
+                Text(
+                    text = "Registrate",
+                    style = TextStyle(color = Color(0xFF2D3D1F), textDecoration = TextDecoration.Underline)
+                )
+            }
         }
     }
 }
