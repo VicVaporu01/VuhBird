@@ -1,9 +1,10 @@
-package com.VicAndSan.vuhbird.pages.ourBrids
+package com.VicAndSan.vuhbird.pages.mainApp
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,18 +31,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.VicAndSan.vuhbird.R
 import com.VicAndSan.vuhbird.models.BirdList
 import com.VicAndSan.vuhbird.models.BirdModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OurBirds() {
+fun OurBirds(paddingValues: PaddingValues) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
@@ -115,5 +114,5 @@ fun BirdCard(bird: BirdModel) {
 @Preview(showSystemUi = true)
 @Composable
 fun OurBirdsPreview() {
-    OurBirds()
+    OurBirds(paddingValues = PaddingValues(0.dp))
 }

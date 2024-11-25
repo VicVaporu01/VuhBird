@@ -12,4 +12,10 @@ object SignUp
 object Main
 
 @Serializable
+object BottomNavigationBar
+
+@Serializable
+object Home
+
+@Serializable
 object OurBirds
