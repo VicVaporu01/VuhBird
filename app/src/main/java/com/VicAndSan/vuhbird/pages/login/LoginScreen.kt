@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.VicAndSan.vuhbird.R
 
 @Composable
-fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit) {
+fun LoginScreen(navigateToSignUp: () -> Unit, navigateToOurBirds: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -65,7 +65,7 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit) {
 
         // Login button
         Button(
-            onClick = { navigateToMain() },
+            onClick = { navigateToOurBirds() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),

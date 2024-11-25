@@ -10,3 +10,6 @@ object SignUp
 
 @Serializable
 object Main
+
+@Serializable
+object OurBirds
