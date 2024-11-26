@@ -19,3 +19,6 @@ object Home
 
 @Serializable
 object OurBirds
+
+@Serializable
+object DonateScreen

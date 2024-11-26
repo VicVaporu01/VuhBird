@@ -5,19 +5,25 @@ import androidx.annotation.StringRes
 import com.VicAndSan.vuhbird.R
 
 sealed class BottomNavItem(
-    val route: String,
+    val route: Any,
     @DrawableRes val icon: Int,
     @StringRes val label: Int
 ) {
     object Home : BottomNavItem(
-        "home",
+        Home,
         R.drawable.home_icon,
         R.string.home
     )
 
     object OurBirds : BottomNavItem(
-        "our_birds",
+        OurBirds,
         R.drawable.ic_bird,
         R.string.our_birds
+    )
+
+    object Donate: BottomNavItem(
+        Donate,
+        R.drawable.ic_donate,
+        R.string.donate
     )
 }

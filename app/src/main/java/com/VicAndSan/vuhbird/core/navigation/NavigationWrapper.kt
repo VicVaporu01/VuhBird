@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.VicAndSan.vuhbird.components.BottomNavigationBar
 import com.VicAndSan.vuhbird.pages.login.LoginScreen
+import com.VicAndSan.vuhbird.pages.mainApp.DonateScreen
 import com.VicAndSan.vuhbird.pages.mainApp.Home
 import com.VicAndSan.vuhbird.pages.mainApp.MainScreen
 import com.VicAndSan.vuhbird.pages.mainApp.OurBirds
@@ -32,7 +33,8 @@ fun NavigationWrapper() {
                     BottomNavigationBar(
                         navController = navController,
                         navigateToHome = { navController.navigate(Home) },
-                        navigateToOurBirds = { navController.navigate(OurBirds) }
+                        navigateToOurBirds = { navController.navigate(OurBirds) },
+                        navigateToDonate = { navController.navigate(DonateScreen) }
                     )
                 }
             ) { paddingValues ->
@@ -45,18 +47,35 @@ fun NavigationWrapper() {
                     BottomNavigationBar(
                         navController = navController,
                         navigateToHome = { navController.navigate(Home) },
-                        navigateToOurBirds = { navController.navigate(OurBirds) }
+                        navigateToOurBirds = { navController.navigate(OurBirds) },
+                        navigateToDonate = { navController.navigate(DonateScreen) }
                     )
                 }
             ) { paddingValues ->
                 OurBirds(paddingValues)
             }
         }
+        composable<DonateScreen> {
+            Scaffold(
+                bottomBar = {
+                    BottomNavigationBar(
+                        navController = navController,
+                        navigateToHome = { navController.navigate(Home) },
+                        navigateToOurBirds = { navController.navigate(OurBirds) },
+                        navigateToDonate = { navController.navigate(DonateScreen) }
+                    )
+                }
+            ) { paddingValues ->
+                DonateScreen(paddingValues)
+            }
+
+        }
         composable<BottomNavigationBar> {
             BottomNavigationBar(
                 navController = navController,
                 navigateToHome = { navController.navigate(Home) },
-                navigateToOurBirds = { navController.navigate(OurBirds) }
+                navigateToOurBirds = { navController.navigate(OurBirds) },
+                navigateToDonate = { navController.navigate(DonateScreen) }
             )
         }
     }
