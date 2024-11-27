@@ -2,6 +2,7 @@ package com.VicAndSan.vuhbird.pages.login
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,9 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import com.VicAndSan.vuhbird.R
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun LoginScreen(navigateToSignUp: () -> Unit, navigateToOurBirds: () -> Unit) {
+fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -65,11 +67,18 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToOurBirds: () -> Unit) {
 
         // Login button
         Button(
-            onClick = { navigateToOurBirds() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xFF83C180))
+            onClick = {
+                auth.signInWithEmailAndPassword(email,password).addOnCompleteListener{
+                    if (it.isSuccessful){
+                        //Navega a main
+                        Log.i("aris", "LOGIN OK")
+                        navigateToMain()
+                    }else{
+                        //Error
+                        Log.i("aris", "LOGIN KO")
+                    }
+                }
+            }
         ) {
             Text("Login", color = Color.White)
         }

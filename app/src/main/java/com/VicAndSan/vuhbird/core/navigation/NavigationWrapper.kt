@@ -12,17 +12,19 @@ import com.VicAndSan.vuhbird.pages.mainApp.Home
 import com.VicAndSan.vuhbird.pages.mainApp.MainScreen
 import com.VicAndSan.vuhbird.pages.mainApp.OurBirds
 import com.VicAndSan.vuhbird.pages.signup.SignUpScreen
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
-fun NavigationWrapper() {
+fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore){
     val navController = rememberNavController()
-
     NavHost(navController = navController, startDestination = Login) {
         composable<Login> {
-            LoginScreen({ navController.navigate(SignUp) }, { navController.navigate(Home) })
+            LoginScreen({ navController.navigate(SignUp)}, {navController.navigate(Main)}, auth)
         }
         composable<SignUp> {
-            SignUpScreen { navController.navigate(Login) }
+            SignUpScreen({navController.navigate(Login)}, auth, db)
+            //LoginScreen({ navController.navigate(SignUp) }, { navController.navigate(Home)}, auth)
         }
         composable<Main> {
             MainScreen()
