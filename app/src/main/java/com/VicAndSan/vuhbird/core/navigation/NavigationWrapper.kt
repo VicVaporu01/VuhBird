@@ -36,7 +36,6 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
                         navController = navController,
                         navigateToHome = { navController.navigate(Home) },
                         navigateToOurBirds = { navController.navigate(OurBirds) },
-                        navigateToDonate = { navController.navigate(DonateScreen) }
                     )
                 }
             ) { paddingValues ->
@@ -50,7 +49,6 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
                         navController = navController,
                         navigateToHome = { navController.navigate(Home) },
                         navigateToOurBirds = { navController.navigate(OurBirds) },
-                        navigateToDonate = { navController.navigate(DonateScreen) }
                     )
                 }
             ) { paddingValues ->
@@ -60,14 +58,13 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
             }
         }
         composable("$DonateScreen/{birdId}") { backStackEntry ->
-            val birdId = backStackEntry.arguments?.getString("birdId")?.toIntOrNull()
+            val birdId = backStackEntry.arguments?.getString("birdId")?.toIntOrNull() ?: 1
             Scaffold(
                 bottomBar = {
                     BottomNavigationBar(
                         navController = navController,
                         navigateToHome = { navController.navigate(Home) },
                         navigateToOurBirds = { navController.navigate(OurBirds) },
-                        navigateToDonate = { navController.navigate(DonateScreen) }
                     )
                 }
             ) { paddingValues ->
@@ -80,7 +77,6 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
                 navController = navController,
                 navigateToHome = { navController.navigate(Home) },
                 navigateToOurBirds = { navController.navigate(OurBirds) },
-                navigateToDonate = { navController.navigate(DonateScreen) }
             )
         }
     }

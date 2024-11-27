@@ -35,7 +35,7 @@ import com.VicAndSan.vuhbird.models.RemoteGetBirdByIdResult
 import com.VicAndSan.vuhbird.services.RetrofitClient
 
 @Composable
-fun DonateScreen(paddingValues: PaddingValues, birdId: Int?) {
+fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
 
@@ -154,7 +154,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int?) {
                             tint = Color.Black
                         )
                         Text(
-                            text = "Protected por Vuh-Bird",
+                            text = "Protected for Vuh-Bird",
                             fontSize = 16.sp,
                             modifier = Modifier.padding(start = 8.dp)
                         )

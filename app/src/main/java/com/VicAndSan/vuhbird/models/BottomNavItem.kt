@@ -21,9 +21,4 @@ sealed class BottomNavItem(
         R.string.our_birds
     )
 
-    object Donate: BottomNavItem(
-        Donate,
-        R.drawable.ic_donate,
-        R.string.donate
-    )
 }
