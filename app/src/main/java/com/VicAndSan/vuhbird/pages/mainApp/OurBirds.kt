@@ -21,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,36 +30,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.rememberAsyncImagePainter
-import com.VicAndSan.vuhbird.models.Entity
-import com.VicAndSan.vuhbird.services.RetrofitClient
+import com.VicAndSan.vuhbird.models.BirdList
+import com.VicAndSan.vuhbird.models.BirdModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OurBirds(paddingValues: PaddingValues) {
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-
-    var birds by remember { mutableStateOf(emptyList<Entity>()) }
-
-    var isLoading by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(Unit) {
-        isLoading = true
-        try {
-            val response =
-                RetrofitClient.birdService.getBirds("2253cc00-3f0b-4ac1-a835-63148a2be200")
-            birds = response.entities
-        } catch (e: Exception) {
-            error = e.message
-        }
-        isLoading = false
-    }
 
     Scaffold { paddingValues ->
         Column(
@@ -85,50 +67,14 @@ fun OurBirds(paddingValues: PaddingValues) {
                     .align(Alignment.CenterHorizontally)
                     .padding(horizontal = 16.dp)
             ) { }
-
-            //Manejo de errores
-            when {
-                isLoading -> {
-                    Text(
-                        "Loading Birds...",
-                        fontSize = 16.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-
-                error != null -> {
-                    Text(
-                        "Error: $error",
-                        fontSize = 16.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-
-                birds.isEmpty() -> {
-                    Text(
-                        "No Birds Found",
-                        fontSize = 16.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-
-                else -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        items(birds) { bird ->
-                            // Dont load the bird if it has no image, name or region
-                            if (bird.images.isNotEmpty() && bird.name != null && bird.region.isNotEmpty()) {
-                                BirdCard(bird)
-                            }
-                        }
-                    }
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(8.dp)
+            ) {
+                items(BirdList.birds) { bird ->
+                    BirdCard(bird)
                 }
             }
         }
@@ -136,7 +82,7 @@ fun OurBirds(paddingValues: PaddingValues) {
 }
 
 @Composable
-fun BirdCard(bird: Entity) {
+fun BirdCard(bird: BirdModel) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         modifier = Modifier.fillMaxWidth()
@@ -146,8 +92,8 @@ fun BirdCard(bird: Entity) {
             modifier = Modifier.padding(8.dp)
         ) {
             Image(
-                painter = rememberAsyncImagePainter(bird.images.getOrNull(0) ?: ""),
-                contentDescription = bird.name ?: "Unknown bird",
+                painter = painterResource(id = bird.image),
+                contentDescription = bird.name,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)
@@ -156,15 +102,11 @@ fun BirdCard(bird: Entity) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = bird.name,
+                text = "${bird.name}, ${bird.age} years old.",
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
-            Text(
-                text = bird.region.getOrNull(0) ?: "Unknown Region",
-                fontSize = 12.sp,
-                color = Color.Gray
-            )
+            Text(text = bird.location, fontSize = 12.sp, color = Color.Gray)
         }
     }
 }
