@@ -19,9 +19,8 @@ fun BottomNavigationBar(
     navController: NavController,
     navigateToHome: () -> Unit,
     navigateToOurBirds: () -> Unit,
-    navigateToDonate: () -> Unit
 ) {
-    val items = listOf(BottomNavItem.Home, BottomNavItem.OurBirds, BottomNavItem.Donate)
+    val items = listOf(BottomNavItem.Home, BottomNavItem.OurBirds)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
@@ -36,7 +35,6 @@ fun BottomNavigationBar(
                         when (item) {
                             BottomNavItem.Home -> navigateToHome()
                             BottomNavItem.OurBirds -> navigateToOurBirds()
-                            BottomNavItem.Donate -> navigateToDonate()
                         }
                     },
                     icon = {
