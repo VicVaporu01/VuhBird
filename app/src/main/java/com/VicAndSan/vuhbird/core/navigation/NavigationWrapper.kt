@@ -54,10 +54,13 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
                     )
                 }
             ) { paddingValues ->
-                OurBirds(paddingValues)
+                OurBirds(paddingValues) { birdId ->
+                    navController.navigate("$DonateScreen/$birdId")
+                }
             }
         }
-        composable<DonateScreen> {
+        composable("$DonateScreen/{birdId}") { backStackEntry ->
+            val birdId = backStackEntry.arguments?.getString("birdId")?.toIntOrNull()
             Scaffold(
                 bottomBar = {
                     BottomNavigationBar(
@@ -68,7 +71,7 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
                     )
                 }
             ) { paddingValues ->
-                DonateScreen(paddingValues)
+                DonateScreen(paddingValues, birdId)
             }
 
         }
