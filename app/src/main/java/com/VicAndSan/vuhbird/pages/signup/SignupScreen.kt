@@ -5,15 +5,22 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +31,7 @@ import com.google.firebase.ktx.Firebase
 
 @Composable
 fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFirestore){
+    val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
@@ -53,42 +61,33 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
         )
         Spacer(modifier = Modifier.height(32.dp))
         //Nombre
-        TextField(
-            value = name,
-            onValueChange = { name = it },
-            placeholder = { Text("Nombre Completo") }
-        )
+        NameTextField(field = name, onFieldChange = {name = it}, "Nombre Completo")
+
         Spacer(modifier = Modifier.height(5.dp))
         //Nro Celular
-        TextField(
-            value = phone,
-            onValueChange = { phone = it },
-            placeholder = { Text("Número Celular") }
-        )
+        PhoneTextField(phone = phone, onPhoneChange = {phone = it})
+
         Spacer(modifier = Modifier.height(5.dp))
         //Email
-        TextField(
-            value = email,
-            onValueChange = { email = it },
-            placeholder = { Text("Email") }
-        )
+        EmailTextField(email = email, {email = it})
+
         Spacer(modifier = Modifier.height(5.dp))
         //Contraseña
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            placeholder = { Text("Contraseña") }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+        PasswordTextField(password = password, onPasswordChange = {password = it})
 
+        Spacer(modifier = Modifier.height(5.dp))
         // Signup button
         Button(
             onClick = {
                 registerUser(email, password, name, phone){
                     if (it){
+
                         Log.i("Aria", "SUCCES")
+                        navigateToLogin()
+                        Toast.makeText(context, "Registro Exitoso", Toast.LENGTH_SHORT).show()
                     }else{
                         Log.i("Aria", "FAIL")
+                        Toast.makeText(context, "Fallo de Registro", Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -146,4 +145,86 @@ fun registerUser (email: String, password: String, name: String, phoneNumber: St
                 onResult(false)
             }
         }
+}
+@Composable
+fun EmailTextField(
+    email: String,
+    onEmailChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = email,
+        onValueChange = onEmailChange,
+        label = { Text("Correo electrónico") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Email,
+                contentDescription = "Correo electrónico"
+            )
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Email
+        )
+    )
+}
+@Composable
+fun PasswordTextField (password: String, onPasswordChange: (String) -> Unit){
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    OutlinedTextField(
+        value = password,
+        onValueChange = onPasswordChange,
+        label = { Text("Contraseña") },
+        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val image = if (isPasswordVisible) Icons.Default.CheckCircle else Icons.Default.Lock
+            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                Icon(imageVector = image, contentDescription = "Mostrar/ocultar contraseña")
+            }
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+@Composable
+fun NameTextField(
+    field: String,
+    onFieldChange: (String) -> Unit,
+    fieldLabel: String
+) {
+    OutlinedTextField(
+        value = field,
+        onValueChange = onFieldChange,
+        label = { Text(fieldLabel) },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "Nombre de Usuario"
+            )
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+@Composable
+fun PhoneTextField(
+    phone: String,
+    onPhoneChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = phone,
+        onValueChange = onPhoneChange,
+        label = { Text("Número Celular") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Phone,
+                contentDescription = "Número de Telefono"
+            )
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Phone
+        )
+    )
 }
