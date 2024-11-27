@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.VicAndSan.vuhbird.pages.login.validateLogin
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
@@ -31,11 +32,19 @@ import com.google.firebase.ktx.Firebase
 
 @Composable
 fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFirestore){
+    //Variables
     val context = LocalContext.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
+    //Variables de manejo de error
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
+    var confirmPasswordError by remember { mutableStateOf("") }
+    var nameError by remember { mutableStateOf("") }
+    var phoneError by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -61,35 +70,97 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
         )
         Spacer(modifier = Modifier.height(32.dp))
         //Nombre
-        NameTextField(field = name, onFieldChange = {name = it}, "Nombre Completo")
+        NameTextField(field = name, onFieldChange = {
+            name = it
+            nameError = ""
+        })
+        if(nameError.isNotEmpty()){
+            Text(
+                text = nameError,
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(5.dp))
         //Nro Celular
-        PhoneTextField(phone = phone, onPhoneChange = {phone = it})
+        PhoneTextField(phone = phone, onPhoneChange = {
+            phone = it
+            phoneError = ""
+        })
+        if(phoneError.isNotEmpty()){
+            Text(
+                text = phoneError,
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(5.dp))
         //Email
-        EmailTextField(email = email, {email = it})
+        EmailTextField(email = email, onEmailChange = {
+            email = it
+            emailError = ""
+        })
+        if(emailError.isNotEmpty()){
+            Text(
+                text = emailError,
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(5.dp))
         //Contraseña
-        PasswordTextField(password = password, onPasswordChange = {password = it})
+        PasswordTextField(password = password, onPasswordChange = {
+            password = it
+            passwordError = ""
+        })
+        if(passwordError.isNotEmpty()){
+            Text(
+                text = passwordError,
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
+        //Validar Contraseña
+        ConfirmPasswordTextField(password = confirmPassword, onConfirmPasswordChange = {
+            confirmPassword = it
+            confirmPasswordError = ""
+        } )
+        if(confirmPasswordError.isNotEmpty()){
+            Text(
+                text = confirmPasswordError,
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(5.dp))
         // Signup button
         Button(
             onClick = {
-                registerUser(email, password, name, phone){
-                    if (it){
-
-                        Log.i("Aria", "SUCCES")
-                        navigateToLogin()
-                        Toast.makeText(context, "Registro Exitoso", Toast.LENGTH_SHORT).show()
-                    }else{
-                        Log.i("Aria", "FAIL")
-                        Toast.makeText(context, "Fallo de Registro", Toast.LENGTH_SHORT).show()
+                val validationResult = validateSignUp(name, phone, email, password, confirmPassword)
+                if(validationResult.isNullOrEmpty()){
+                    registerUser(email, password, name, phone){
+                        if (it){
+                            Log.i("Aria", "SUCCES")
+                            navigateToLogin()
+                            Toast.makeText(context, "Registro Exitoso", Toast.LENGTH_SHORT).show()
+                        }else{
+                            Log.i("Aria", "FAIL")
+                            Toast.makeText(context, "Fallo de Registro", Toast.LENGTH_SHORT).show()
+                        }
                     }
+                }else {
+                    nameError = validationResult["name"] ?: ""
+                    phoneError = validationResult["phone"] ?: ""
+                    emailError = validationResult["email"] ?: ""
+                    passwordError = validationResult["password"] ?: ""
+                    confirmPasswordError = validationResult["confirmPassword"] ?: ""
                 }
+
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -187,15 +258,32 @@ fun PasswordTextField (password: String, onPasswordChange: (String) -> Unit){
     )
 }
 @Composable
+fun ConfirmPasswordTextField (password: String, onConfirmPasswordChange: (String) -> Unit){
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    OutlinedTextField(
+        value = password,
+        onValueChange = onConfirmPasswordChange,
+        label = { Text("Confirme la Contraseña") },
+        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val image = if (isPasswordVisible) Icons.Default.CheckCircle else Icons.Default.Lock
+            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                Icon(imageVector = image, contentDescription = "Mostrar/ocultar contraseña")
+            }
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+@Composable
 fun NameTextField(
     field: String,
     onFieldChange: (String) -> Unit,
-    fieldLabel: String
 ) {
     OutlinedTextField(
         value = field,
         onValueChange = onFieldChange,
-        label = { Text(fieldLabel) },
+        label = { Text("Nombre Completo") },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.AccountCircle,
@@ -227,4 +315,30 @@ fun PhoneTextField(
             keyboardType = KeyboardType.Phone
         )
     )
+}
+fun validateSignUp (name:String,
+                    phone: String,
+                    email: String,
+                    password: String,
+                    confirmPassword: String
+): Map<String, String>{
+    val errors = mutableMapOf<String, String>()
+    if (name.isBlank()) errors["name"] = "El nombre no puede estar vacío."
+    if (phone.isBlank()) errors["phone"] = "El teléfono no puede estar vacío."
+    if (email.isBlank()) {
+        errors["email"] = "El correo no puede estar vacío."
+    } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        errors["email"] = "El correo electrónico no es válido."
+    }
+    if (password.isBlank()) {
+        errors["password"] = "La contraseña no puede estar vacía."
+    } else if (password.length < 8) {
+        errors["password"] = "La contraseña debe tener al menos 8 caracteres."
+    } else if (!password.contains(Regex("[^a-zA-Z0-9]"))) {
+        errors["password"] = "La contraseña debe incluir al menos un carácter especial."
+    }
+    if (confirmPassword != password) {
+        errors["confirmPassword"] = "Las contraseñas no coinciden."
+    }
+    return errors
 }

@@ -1,5 +1,7 @@
 package com.VicAndSan.vuhbird.pages.mainApp
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,9 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,20 +25,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
 import com.VicAndSan.vuhbird.R
 import com.VicAndSan.vuhbird.models.RemoteGetBirdByIdResult
 import com.VicAndSan.vuhbird.services.RetrofitClient
+import com.google.api.Context
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
+    //Variables
     var text by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
+    //Variables de manejo de error
+    var donationAmount by remember { mutableStateOf("") }
+    var donationAmountError by remember { mutableStateOf("") }
 
     var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
@@ -61,7 +75,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
             )
         )
     }
-
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         if (birdId != null) {
             isLoading = true
@@ -178,15 +192,76 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
                     }
                 }
             }
+            OutlinedTextField(
+                value = donationAmount,
+                onValueChange = {
+                    if (it.all { char -> char.isDigit() }) { // Solo permite números
+                        donationAmount = it
+                        donationAmountError = "" // Limpia errores si el input es válido
+                    }
+                },
+                label = { Text("Monto") },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
+            )
+            if (donationAmountError.isNotEmpty()) {
+                Text(text = donationAmountError, color = androidx.compose.ui.graphics.Color.Red)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = {
+                val amount = donationAmount.toIntOrNull()
+                if(amount == null || amount <= 0 ){
+                    donationAmountError = "Porfavor ingrese un monto válido"
+                }else{
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid
+                    if (userId!=null){
+                        handleDonation(userId, amount, bird.name, context)
+                    }else{
+                        Log.i("Arial", "KO")
+                    }
+
+                }
+            }){
+                Text("Donar")
+            }
         }
     }
-}
 
-@Preview(showSystemUi = true)
-@Composable
-fun DonateScreenPreview() {
-    DonateScreen(
-        paddingValues = PaddingValues(0.dp),
-        birdId = TODO()
+}
+fun handleDonation(
+    userId: String,
+    amount: Int,
+    birdName: String,
+    context: android.content.Context
+) {
+
+    val db = Firebase.firestore
+
+    // Crear una nueva donación
+    val donationRef = db.collection("donations").document()
+    val donationData = mapOf(
+        "amount" to amount,
+        "userId" to userId,
+        "birdName" to birdName,
+        "timestamp" to FieldValue.serverTimestamp()
     )
+
+    donationRef.set(donationData)
+        .addOnSuccessListener {
+            val userRef = db.collection("users").document(userId)
+            userRef.update("donations", FieldValue.arrayUnion(donationRef.id))
+                .addOnSuccessListener {
+                    Log.i("Aria", "SUCCES")
+                    Toast.makeText(context, "Donación Exitosa - Muchas gracias", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { e ->
+                    Log.i("Aria", "FAILURE")
+                    Toast.makeText(context, "Fallo en la donación", Toast.LENGTH_SHORT).show()
+                }
+        }
+        .addOnFailureListener { e ->
+            Log.i("Aria", "FAILURE")
+            Toast.makeText(context, "Fallo en la donación", Toast.LENGTH_SHORT).show()
+        }
 }

@@ -33,8 +33,12 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: FirebaseAuth) {
+    //Variables
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    //Variables de manejo de error
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -55,23 +59,49 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: 
         )
         Spacer(modifier = Modifier.height(32.dp))
 
-        EmailTextField(email = email, onEmailChange = {email = it})
-        PasswordTextField(password = password, onPasswordChange = {password = it})
+        EmailTextField(email = email, onEmailChange = {
+            email = it
+            emailError = ""
+        })
+        if(emailError.isNotEmpty()){
+            Text(
+                text = emailError,
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+        PasswordTextField(password = password, onPasswordChange = {
+            password = it
+            passwordError = ""
+        })
+        if(passwordError.isNotEmpty()){
+            Text(
+                text = passwordError,
+                color = androidx.compose.ui.graphics.Color.Red,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Login button
         Button(
             onClick = {
-                auth.signInWithEmailAndPassword(email,password).addOnCompleteListener{
-                    if (it.isSuccessful){
-                        //Navega a main
-                        Log.i("aris", "LOGIN OK")
-                        navigateToMain()
-                    }else{
-                        //Error
-                        Log.i("aris", "LOGIN KO")
+                val validationResult = validateLogin(email, password)
+                if(validationResult.isNullOrEmpty()){
+                    auth.signInWithEmailAndPassword(email,password).addOnCompleteListener{
+                        if (it.isSuccessful){
+                            //Navega a main
+                            Log.i("aris", "LOGIN OK")
+                            navigateToMain()
+                        }else{
+                            //Error
+                            Log.i("aris", "LOGIN KO")
+                        }
                     }
+                }else {
+                    if (validationResult.containsKey("email")) emailError = validationResult["email"]!!
+                    if (validationResult.containsKey("password")) passwordError = validationResult["password"]!!
                 }
             }
         ) {
@@ -132,4 +162,18 @@ fun PasswordTextField (password: String, onPasswordChange: (String) -> Unit){
         singleLine = true,
         modifier = Modifier.fillMaxWidth()
     )
+}
+fun validateLogin(email: String, password: String): Map<String, String>? {
+    val errors = mutableMapOf<String, String>()
+
+    if (email.isBlank()) {
+        errors["email"] = "El campo de correo no puede estar vacío."
+    } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        errors["email"] = "El correo electrónico no es válido."
+    }
+
+    if (password.isBlank()) {
+        errors["password"] = "El campo de contraseña no puede estar vacío."
+    }
+    return if (errors.isEmpty()) null else errors
 }
