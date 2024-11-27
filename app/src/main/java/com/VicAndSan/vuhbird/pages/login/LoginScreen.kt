@@ -7,6 +7,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
@@ -19,6 +22,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.material3.TextField
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,19 +55,8 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: 
         )
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Email input
-        TextField(
-            value = email,
-            onValueChange = { email = it },
-            placeholder = { Text("Email") }
-        )
-        Spacer(modifier = Modifier.height(5.dp))
-        // Password input
-        TextField(
-            value = password,
-            onValueChange = { password = it },
-            placeholder = { Text("Contraseña") }
-        )
+        EmailTextField(email = email, onEmailChange = {email = it})
+        PasswordTextField(password = password, onPasswordChange = {password = it})
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -97,4 +92,44 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: 
             }
         }
     }
+}
+@Composable
+fun EmailTextField(
+    email: String,
+    onEmailChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = email,
+        onValueChange = onEmailChange,
+        label = { Text("Correo electrónico") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Email,
+                contentDescription = "Correo electrónico"
+            )
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Email
+        )
+    )
+}
+@Composable
+fun PasswordTextField (password: String, onPasswordChange: (String) -> Unit){
+    var isPasswordVisible by remember { mutableStateOf(false) }
+    OutlinedTextField(
+        value = password,
+        onValueChange = onPasswordChange,
+        label = { Text("Contraseña") },
+        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val image = if (isPasswordVisible) Icons.Default.CheckCircle else Icons.Default.Lock
+            IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
+                Icon(imageVector = image, contentDescription = "Mostrar/ocultar contraseña")
+            }
+        },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
+    )
 }
