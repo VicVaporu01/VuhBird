@@ -19,9 +19,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Login) {
+        //Pantalla login
         composable<Login> {
             LoginScreen({ navController.navigate(SignUp) }, { navController.navigate(Home) }, auth)
         }
+        //Pantalla signup
         composable<SignUp> {
             SignUpScreen({ navController.navigate(Login) }, auth, db)
             //LoginScreen({ navController.navigate(SignUp) }, { navController.navigate(Home)}, auth)
@@ -29,6 +31,7 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
         composable<Main> {
             MainScreen()
         }
+        //Pantalla home
         composable<Home> {
             Scaffold(
                 bottomBar = {
@@ -42,6 +45,7 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
                 Home(paddingValues)
             }
         }
+        //Pantalla OurBirds
         composable<OurBirds> {
             Scaffold(
                 bottomBar = {
@@ -57,6 +61,7 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
                 }
             }
         }
+        //Ruta dinámica para las targetas de aves
         composable("$DonateScreen/{birdId}") { backStackEntry ->
             val birdId = backStackEntry.arguments?.getString("birdId")?.toIntOrNull() ?: 1
             Scaffold(
@@ -72,6 +77,7 @@ fun NavigationWrapper(auth: FirebaseAuth, db: FirebaseFirestore) {
             }
 
         }
+        //Menú de navegación
         composable<BottomNavigationBar> {
             BottomNavigationBar(
                 navController = navController,

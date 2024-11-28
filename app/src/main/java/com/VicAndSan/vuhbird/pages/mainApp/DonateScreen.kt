@@ -55,7 +55,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
 
     var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
-
+    //Datos de las aves
     var bird by remember {
         mutableStateOf(
             RemoteGetBirdByIdResult(
@@ -75,6 +75,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
             )
         )
     }
+    //Conexión a la API
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         if (birdId != null) {
@@ -92,7 +93,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
             isLoading = false
         }
     }
-
+    //Gestión de carga de datos
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -120,7 +121,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
                         modifier = Modifier.padding(16.dp)
                     )
                 }
-
+                //Targetas de aves
                 else -> {
                     Image(
                         painter = rememberAsyncImagePainter(bird.images.firstOrNull()),
@@ -192,6 +193,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
                     }
                 }
             }
+            //Campo de donaciones y validación de datos del campo
             OutlinedTextField(
                 value = donationAmount,
                 onValueChange = {
@@ -209,6 +211,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+            //Botón donar y validación de la cantidad donada
             Button(onClick = {
                 val amount = donationAmount.toIntOrNull()
                 if(amount == null || amount <= 0 ){
@@ -229,6 +232,7 @@ fun DonateScreen(paddingValues: PaddingValues, birdId: Int? = 1) {
     }
 
 }
+//Gestión de la donación
 fun handleDonation(
     userId: String,
     amount: Int,
@@ -246,7 +250,7 @@ fun handleDonation(
         "birdName" to birdName,
         "timestamp" to FieldValue.serverTimestamp()
     )
-
+    //Relación de donación con usuario
     donationRef.set(donationData)
         .addOnSuccessListener {
             val userRef = db.collection("users").document(userId)
