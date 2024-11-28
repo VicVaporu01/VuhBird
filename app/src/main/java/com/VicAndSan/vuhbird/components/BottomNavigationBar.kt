@@ -13,7 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.VicAndSan.vuhbird.R
 import com.VicAndSan.vuhbird.models.BottomNavItem
-
+//Composable del menú de navegación
 @Composable
 fun BottomNavigationBar(
     navController: NavController,

@@ -58,7 +58,7 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: 
             contentScale = ContentScale.Fit
         )
         Spacer(modifier = Modifier.height(32.dp))
-
+        //Campo de texto para email y validación de datos
         EmailTextField(email = email, onEmailChange = {
             email = it
             emailError = ""
@@ -70,6 +70,7 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: 
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
+        //Campo de texto para contraseña y validación de datos
         PasswordTextField(password = password, onPasswordChange = {
             password = it
             passwordError = ""
@@ -84,10 +85,11 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: 
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Login button
+        // Botón Login
         Button(
             onClick = {
                 val validationResult = validateLogin(email, password)
+                //Validación de datos
                 if(validationResult.isNullOrEmpty()){
                     auth.signInWithEmailAndPassword(email,password).addOnCompleteListener{
                         if (it.isSuccessful){
@@ -123,6 +125,7 @@ fun LoginScreen(navigateToSignUp: () -> Unit, navigateToMain: () -> Unit, auth: 
         }
     }
 }
+//Composables para los campos del formulario
 @Composable
 fun EmailTextField(
     email: String,
@@ -163,6 +166,7 @@ fun PasswordTextField (password: String, onPasswordChange: (String) -> Unit){
         modifier = Modifier.fillMaxWidth()
     )
 }
+//Validaciín de datos
 fun validateLogin(email: String, password: String): Map<String, String>? {
     val errors = mutableMapOf<String, String>()
 
