@@ -69,7 +69,7 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
             style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold)
         )
         Spacer(modifier = Modifier.height(32.dp))
-        //Nombre
+        //Campo de texto para nombre del usuario y validación de datos
         NameTextField(field = name, onFieldChange = {
             name = it
             nameError = ""
@@ -83,7 +83,7 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        //Nro Celular
+        //Campo de texto para número de celular y validación de datos
         PhoneTextField(phone = phone, onPhoneChange = {
             phone = it
             phoneError = ""
@@ -97,7 +97,7 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        //Email
+        //Campo de texto para email y validación de datos
         EmailTextField(email = email, onEmailChange = {
             email = it
             emailError = ""
@@ -111,7 +111,7 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        //Contraseña
+        //Campo de texto para contraseña y validación de datos
         PasswordTextField(password = password, onPasswordChange = {
             password = it
             passwordError = ""
@@ -124,7 +124,7 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
             )
         }
 
-        //Validar Contraseña
+        //Campo de texto para validar contraseña y validación de datos
         ConfirmPasswordTextField(password = confirmPassword, onConfirmPasswordChange = {
             confirmPassword = it
             confirmPasswordError = ""
@@ -138,9 +138,10 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
         }
 
         Spacer(modifier = Modifier.height(5.dp))
-        // Signup button
+        // Botón Signup
         Button(
             onClick = {
+                //Validación de datos
                 val validationResult = validateSignUp(name, phone, email, password, confirmPassword)
                 if(validationResult.isNullOrEmpty()){
                     registerUser(email, password, name, phone){
@@ -185,7 +186,7 @@ fun SignUpScreen (navigateToLogin: () -> Unit, auth: FirebaseAuth, db:FirebaseFi
         }
     }
 }
-
+//Creación de usuario
 fun registerUser (email: String, password: String, name: String, phoneNumber: String, onResult: (Boolean)-> Unit){
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
@@ -217,6 +218,7 @@ fun registerUser (email: String, password: String, name: String, phoneNumber: St
             }
         }
 }
+//Composables para los campos del formulario
 @Composable
 fun EmailTextField(
     email: String,
@@ -316,6 +318,7 @@ fun PhoneTextField(
         )
     )
 }
+//Validación de datos del formulario
 fun validateSignUp (name:String,
                     phone: String,
                     email: String,
@@ -330,6 +333,7 @@ fun validateSignUp (name:String,
     } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
         errors["email"] = "El correo electrónico no es válido."
     }
+    //Validación de Reglas para contraseña
     if (password.isBlank()) {
         errors["password"] = "La contraseña no puede estar vacía."
     } else if (password.length < 8) {

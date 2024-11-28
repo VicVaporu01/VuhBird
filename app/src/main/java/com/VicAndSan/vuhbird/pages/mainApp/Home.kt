@@ -88,7 +88,7 @@ fun Home(paddingValues: PaddingValues) {
         }
     }
 }
-
+// Composables para las targetas
 @Composable
 fun NewsCard(news: NewsItem) {
     Card(

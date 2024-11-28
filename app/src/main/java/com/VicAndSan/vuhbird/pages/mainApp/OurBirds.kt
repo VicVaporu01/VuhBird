@@ -50,7 +50,7 @@ fun OurBirds(paddingValues: PaddingValues, navigateToDonateScreen: (Int) -> Unit
 
     var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
-
+    //Conexión a la API
     LaunchedEffect(Unit) {
         isLoading = true
         try {
@@ -139,7 +139,7 @@ fun OurBirds(paddingValues: PaddingValues, navigateToDonateScreen: (Int) -> Unit
         }
     }
 }
-
+//Composables para la gestión de las targetas de aves
 @Composable
 fun BirdCard(bird: Entity, onClick: () -> Unit) {
     Card(
